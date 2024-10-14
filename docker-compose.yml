@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo_container
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-to-mongo
+
+  app:
+    build: .
+    restart: always
+    container_name: spring_boot_app
+    environment:
+      DB_HOST: postgres_db
+    ports:
+      - "9090:9090"
+    depends_on:
+      - mongo
+    networks:
+      - app-to-mongo
+
+networks:
+  app-to-mongo:
+    driver: bridge
+
+volumes:
+  mongo_data:
