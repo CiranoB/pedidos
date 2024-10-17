@@ -21,7 +21,11 @@ services:
     restart: always
     container_name: spring_boot_app
     environment:
-      DB_HOST: postgres_db
+      - MONGO_USERNAME: mongo
+      - MONGO_PASSWORD: mongo
+      - MONGO_HOST: localhost
+      - MONGO_PORT: 27017
+      - MONGO_DATABASE: parquimetro
     ports:
       - "9090:9090"
     depends_on:

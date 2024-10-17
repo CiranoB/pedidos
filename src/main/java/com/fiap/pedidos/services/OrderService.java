@@ -1,6 +1,7 @@
 package com.fiap.pedidos.services;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class OrderService {
         order.setPaymentStatus(PaymentStatus.PENDING);
         order.setProductQuantities(orderRecord.productQuantities());
         order.setUserEmail(orderRecord.userEmail());
+        order.setCreateDate(LocalDateTime.now());
         this.orderRepository.save(order);
         return order;
     }
