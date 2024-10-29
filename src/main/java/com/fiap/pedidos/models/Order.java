@@ -5,33 +5,30 @@ import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import com.fiap.pedidos.enums.PaymentStatus;
+import com.mongodb.lang.NonNull;
 
-import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Data
 @Document
 @NoArgsConstructor
-@AllArgsConstructor
 public class Order {
     
     @Id
     private String idOrder;
 
-    @Email
+    @NonNull
     private String userEmail;
 
+    @NonNull
     private LocalDateTime createDate;
 
+    @NonNull
     private Map<String, Integer> productQuantities;
 
+    @NonNull
     private PaymentStatus paymentStatus;
 }
