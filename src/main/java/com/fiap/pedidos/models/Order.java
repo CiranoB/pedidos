@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fiap.pedidos.enums.PaymentStatus;
 import com.mongodb.lang.NonNull;
 
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.fiap.pedidos.enums.PaymentStatus;
@@ -17,6 +20,12 @@ import com.fiap.pedidos.repositories.OrderRepository;
 
 @Service
 public class OrderService {
+
+    private final MongoTemplate mongoTemplate;
+
+    public OrderService (MongoTemplate mongoTemplate){
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Autowired
     private OrderRepository orderRepository;
@@ -41,7 +50,6 @@ public class OrderService {
         return this.orderRepository.findAll();
     }
 
-    //eu preciso dar o throw nos dois tipos de exceção?
     public Order saveOrder(OrderRecord orderRecord) throws InvalidProductQuantity, InvalidEmailAddress{
         verifyProductQuantities(orderRecord.productQuantities());
         verifyEmail(orderRecord.userEmail());
@@ -52,6 +60,11 @@ public class OrderService {
         order.setCreateDate(LocalDateTime.now());
         this.orderRepository.save(order);
         return order;
+    }
+
+    public List<Order> getOrderByEmail(String email){
+        Query query = new Query(Criteria.where("userEmail").is(email));
+        return mongoTemplate.find(query, Order.class);
     }
 
 }

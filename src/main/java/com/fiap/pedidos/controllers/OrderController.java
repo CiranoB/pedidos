@@ -42,4 +42,9 @@ public class OrderController {
         }
         
     }
+
+    @GetMapping("/")
+    public ResponseEntity<List<Order>> getOrderByEmail(String email){
+        return ResponseEntity.ok(this.orderService.getOrderByEmail(email));
+    }
 }
