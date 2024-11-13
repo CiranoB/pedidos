@@ -2,6 +2,7 @@ package com.fiap.pedidos.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
 
@@ -50,6 +51,10 @@ public class OrderService {
         return this.orderRepository.findAll();
     }
 
+    public Optional<Order> getByOrderId(String orderId){
+        return this.orderRepository.findById(orderId);
+    }
+
     public Order saveOrder(OrderRecord orderRecord) throws InvalidProductQuantity, InvalidEmailAddress{
         verifyProductQuantities(orderRecord.productQuantities());
         verifyEmail(orderRecord.userEmail());
@@ -66,5 +71,16 @@ public class OrderService {
         Query query = new Query(Criteria.where("userEmail").is(email));
         return mongoTemplate.find(query, Order.class);
     }
+
+    public Optional<Order> updateOrderPaymentStatus(String orderId, PaymentStatus newStatus){
+        Optional<Order> optionalOrder = this.getByOrderId(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setPaymentStatus(newStatus);
+            this.orderRepository.save(order);
+            return Optional.of(order);
+        }
+        return Optional.empty();
+        }
 
 }
