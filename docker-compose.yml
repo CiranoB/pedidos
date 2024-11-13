@@ -21,6 +21,7 @@ services:
     restart: always
     container_name: spring_boot_app
     environment:
+      API_URL: http://localhost:9090
       MONGO_USERNAME: mongo
       MONGO_PASSWORD: mongo
       MONGO_HOST: mongo
