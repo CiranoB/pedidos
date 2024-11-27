@@ -32,14 +32,15 @@ public class OrderService {
     
     private final OrderEventGateway orderEventGateway;
 
-    public OrderService (MongoTemplate mongoTemplate, OrderEventGateway orderEventGateway){
+    @Autowired
+    private OrderRepository orderRepository;
+    
+    public OrderService (MongoTemplate mongoTemplate, OrderEventGateway orderEventGateway, OrderRepository orderRepository){
         this.mongoTemplate = mongoTemplate;
         this.httpClient = HttpClient.newHttpClient();
         this.orderEventGateway = orderEventGateway;
+        this.orderRepository = orderRepository;
     }
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     private void verifyProductQuantities(Map<String, Integer> productQuantities) throws InvalidProductQuantity{
         for(var entry: productQuantities.entrySet()){
