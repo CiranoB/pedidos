@@ -29,10 +29,13 @@ public class OrderService {
     private final MongoTemplate mongoTemplate;
 
     private final HttpClient httpClient;
+    
+    private final OrderEventGateway orderEventGateway;
 
-    public OrderService (MongoTemplate mongoTemplate){
+    public OrderService (MongoTemplate mongoTemplate, OrderEventGateway orderEventGateway){
         this.mongoTemplate = mongoTemplate;
         this.httpClient = HttpClient.newHttpClient();
+        this.orderEventGateway = orderEventGateway;
     }
 
     @Autowired
@@ -69,21 +72,21 @@ public class OrderService {
                   "quantity": "%d"
                 }
                 """, productCode, quantity*-1);
+            
+            // HttpRequest request = HttpRequest.newBuilder()
+            //         .uri(URI.create("http://catalogo-api:9090/catalogo/stock/replenish"))
+            //         .header("Content-Type", "application/json")
+            //         .method("PATCH", HttpRequest.BodyPublishers.ofString(requestBody))
+            //         .build();
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://catalogo-api:9090/catalogo/stock/replenish"))
-                    .header("Content-Type", "application/json")
-                    .method("PATCH", HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
+            // try {
+            //     HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            try {
-                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-                System.out.println("Status Code: " + response.statusCode());
-                System.out.println("Response Body: " + response.body());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            //     System.out.println("Status Code: " + response.statusCode());
+            //     System.out.println("Response Body: " + response.body());
+            // } catch (Exception e) {
+            //     e.printStackTrace();
+            // }
         });
     }
 
@@ -104,7 +107,8 @@ public class OrderService {
         order.setUserEmail(orderRecord.userEmail());
         order.setCreateDate(LocalDateTime.now());
         this.orderRepository.save(order);
-        updateStock(orderRecord.productQuantities());
+        this.orderEventGateway.sendOrderCreatedEvent(order);
+        // updateStock(orderRecord.productQuantities());
         return order;
     }
 
