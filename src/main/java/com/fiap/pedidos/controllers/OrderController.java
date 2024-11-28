@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fiap.pedidos.exceptions.InvalidEmailAddress;
@@ -52,13 +53,13 @@ public class OrderController {
         return ResponseEntity.ok(this.orderService.getByOrderId(orderId));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Order>> getOrderByEmail(String email){
+    @GetMapping
+    public ResponseEntity<List<Order>> getOrderByEmail(@RequestParam(name = "email") String email){
         return ResponseEntity.ok(this.orderService.getOrderByEmail(email));
     }
 
     @PatchMapping("/update_status")
-    public ResponseEntity<Optional<Order>> updateOrderStatus (UpdateOrderRecord updateOrderRecord){
+    public ResponseEntity<Optional<Order>> updateOrderStatus (@RequestBody UpdateOrderRecord updateOrderRecord){
         return ResponseEntity.ok(this.orderService.updateOrderPaymentStatus(updateOrderRecord.orderId(), updateOrderRecord.paymentStatus()));
     }
 
