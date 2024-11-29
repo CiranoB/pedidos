@@ -1,6 +1,5 @@
 package com.fiap.pedidos.infra;
 
-import org.apache.catalina.mapper.Mapper;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Component;
 
