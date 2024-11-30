@@ -103,7 +103,7 @@ public class OrderService {
         verifyProductQuantities(orderRecord.productQuantities());
         verifyEmail(orderRecord.userEmail());
         Order order = new Order();
-        order.setPaymentStatus(PaymentStatus.PENDING);
+        order.setStatus(PaymentStatus.PENDING);
         order.setProductQuantities(orderRecord.productQuantities());
         order.setUserEmail(orderRecord.userEmail());
         order.setCreateDate(LocalDateTime.now());
@@ -122,7 +122,7 @@ public class OrderService {
         Optional<Order> optionalOrder = this.getByOrderId(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            order.setPaymentStatus(newStatus);
+            order.setStatus(newStatus);
             this.orderRepository.save(order);
             return Optional.of(order);
         }

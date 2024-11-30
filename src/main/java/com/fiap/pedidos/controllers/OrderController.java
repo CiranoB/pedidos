@@ -59,8 +59,15 @@ public class OrderController {
     }
 
     @PatchMapping("/update_status")
-    public ResponseEntity<Optional<Order>> updateOrderStatus (@RequestBody UpdateOrderRecord updateOrderRecord){
-        return ResponseEntity.ok(this.orderService.updateOrderPaymentStatus(updateOrderRecord.orderId(), updateOrderRecord.paymentStatus()));
+    public ResponseEntity<?> updateOrderStatus (@RequestBody UpdateOrderRecord updateOrderRecord){
+        Optional<Order> updatedOrder = this.orderService.updateOrderPaymentStatus(updateOrderRecord.orderId(), updateOrderRecord.paymentStatus());
+
+        if (!updatedOrder.isPresent()) {
+            return ResponseEntity.unprocessableEntity()
+                    .body("Pedido não encontrado ou não pôde ser atualizado.");
+        }
+
+        return ResponseEntity.ok(updatedOrder);
+    };
     }
 
-}

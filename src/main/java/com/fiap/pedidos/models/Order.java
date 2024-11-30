@@ -33,5 +33,5 @@ public class Order {
     private Map<String, Integer> productQuantities;
 
     @NonNull
-    private PaymentStatus paymentStatus;
+    private PaymentStatus status;
 }

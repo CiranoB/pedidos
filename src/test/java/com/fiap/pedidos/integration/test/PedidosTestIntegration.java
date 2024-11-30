@@ -46,7 +46,7 @@ class PedidosTestIntegration extends AbstractIntegrationTest {
                 final var order = new com.fiap.pedidos.models.Order();
                 order.setUserEmail("email@email.com");
                 order.setCreateDate(LocalDateTime.now());
-                order.setPaymentStatus(PaymentStatus.PAID);
+                order.setStatus(PaymentStatus.PAID);
                 order.setProductQuantities(Map.of("teste", 1));
                 this.response = this.orderRepository.save(order);
         }

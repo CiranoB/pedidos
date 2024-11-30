@@ -15,7 +15,7 @@ public class OrderMock {
         order.setUserEmail("teste@email.com");
         order.setCreateDate(LocalDateTime.now());
         order.setProductQuantities(Map.of("teste", 1));
-        order.setPaymentStatus(PaymentStatus.PENDING);
+        order.setStatus(PaymentStatus.PENDING);
         return order;
 
     }
