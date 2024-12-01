@@ -1,0 +1,163 @@
+version: '3.9'
+services:
+  ### DATABASES ###
+  catalogo-postgres:
+    image: postgres
+    container_name: catalogo-postgres
+    shm_size: 128mb
+    restart: always
+    environment:
+      POSTGRES_USER: catalogo
+      POSTGRES_DB: catalogo
+      POSTGRES_PASSWORD: catalogo
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    networks:
+      - fiap-microservices
+
+  pedidos-mongo:
+    image: mongo:latest
+    container_name: mongo_container
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - fiap-microservices
+
+  delivery-postgres:
+    container_name: delivery-postgres
+    restart: always
+    image: postgres
+
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "delivery"
+      POSTGRES_DB: "delivery"
+      POSTGRES_PASSWORD: "SuperPassword@2"
+    networks:
+      - fiap-microservices
+
+
+  customer-postgres:
+    container_name: customer-postgres
+    restart: always
+    image: postgres
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: "customer"
+      POSTGRES_DB: "customer"
+      POSTGRES_PASSWORD: "SuperPassword@2"
+    networks:
+      - fiap-microservices
+
+
+
+  ### API's ###
+  catalogo-api:
+    build: ./catalogo
+    restart: always
+    container_name: catalogo-api
+    environment:
+      PEDIDOS_URL: http://pedidos-api:9090/api/order/update_status
+      PORT_APP: 9090
+      DB_SGDB: postgresql
+      DB_HOST: catalogo-postgres
+      DB_PORT: 5432
+      DB_NAME: catalogo
+      DB_SCHEMA: challenge
+      DB_USER: catalogo
+      DB_PASSWORD: catalogo
+      RABBITMQ_HOST: rabbitmq
+    ports:
+      - "9090:9090"
+    depends_on:
+      - catalogo-postgres
+      - rabbitmq
+    volumes:
+      - catalogo_data:/var/lib/postgresql/data
+    networks:
+      - fiap-microservices
+
+  pedidos-api:
+    build: ./pedidos
+    restart: always
+    container_name: pedidos-api
+    environment:
+      API_URL: http://catalogo-api:9090
+      MONGO_USERNAME: mongo
+      MONGO_PASSWORD: mongo
+      MONGO_HOST: pedidos-mongo
+      MONGO_PORT: 27017
+      MONGO_DATABASE: pedidos
+      RABBITMQ_HOST: rabbitmq
+    ports:
+      - "9091:9090"
+    depends_on:
+      - pedidos-mongo
+      - rabbitmq
+    networks:
+      - fiap-microservices
+
+  delivery-api:
+    build:
+      context: ./delivery
+      dockerfile: Dockerfile
+    container_name: delivery-api
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - delivery-postgres
+    environment:
+      - PEDIDOS_URL=http://pedidos-api:9090/api/order/update_status
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - fiap-microservices
+
+  customer-api:
+    build:
+      context: ./Customer
+      dockerfile: Dockerfile
+    container_name: customer-api
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - customer-postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - fiap-microservices
+
+
+  ### RabbitMQ ###
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - fiap-microservices
+
+networks:
+  fiap-microservices:
+    driver: bridge
+
+volumes:
+  mongo_data:
+  catalogo_data:
