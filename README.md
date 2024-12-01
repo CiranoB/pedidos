@@ -19,7 +19,7 @@ para o sistema.
 - Logística de Entrega (https://github.com/joaoygorr/delivery)
 
 ## Tecnologias utilizadas
-- Java 17 LTS
+- Java 21 LTS
 - Spring Boot
 - Docker
 - Postgres
