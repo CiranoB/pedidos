@@ -7,11 +7,11 @@
 Este projeto foi desenvolvido como parte do Tech Challenge, um desafio técnico que engloba os conhecimentos adquiridos em diversas disciplinas do curso. O objetivo principal é a criação de um Sistema de Gerenciamento de Pedidos.
 
 ## Funcionalidades
-Este microsserviço gerenciará o catálogo de
-produtos, incluindo informações detalhadas dos produtos e o controle de
-estoque. Uma característica chave será a funcionalidade de carga de
-produtos, permitindo a importação em massa de informações de produtos
-para o sistema.
+Centralizará o processamento de todos os
+pedidos, desde a criação até a conclusão. Isso inclui receber pedidos dos
+clientes, processar pagamentos (se aplicável), e coordenar com o
+microsserviço de logística de entrega para garantir a entrega eficiente dos
+produtos
 
 ## APIs associdas ao projeto
 - Gerenciamento de Clientes (https://github.com/joaoygorr/Customer)
