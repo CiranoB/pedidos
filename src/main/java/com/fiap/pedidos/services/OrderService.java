@@ -1,9 +1,5 @@
 package com.fiap.pedidos.services;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +24,6 @@ public class OrderService {
 
     private final MongoTemplate mongoTemplate;
 
-    private final HttpClient httpClient;
     
     private final OrderEventGateway orderEventGateway;
 
@@ -37,7 +32,6 @@ public class OrderService {
     
     public OrderService (MongoTemplate mongoTemplate, OrderEventGateway orderEventGateway, OrderRepository orderRepository){
         this.mongoTemplate = mongoTemplate;
-        this.httpClient = HttpClient.newHttpClient();
         this.orderEventGateway = orderEventGateway;
         this.orderRepository = orderRepository;
     }
@@ -58,39 +52,6 @@ public class OrderService {
         }   
     }
 
-    private void updateStock(Map<String, Integer> productQuantities) {
-        String apiUrl = System.getenv("API_URL");
-
-        if (apiUrl == null || apiUrl.isEmpty()) {
-            System.out.println("A variável de ambiente 'API_URL' não está configurada.");
-            return;
-        }
-
-        productQuantities.forEach((productCode, quantity) -> {
-            String requestBody = String.format("""
-                {
-                  "productCode": "%s",
-                  "quantity": "%d"
-                }
-                """, productCode, quantity*-1);
-            
-            // HttpRequest request = HttpRequest.newBuilder()
-            //         .uri(URI.create("http://catalogo-api:9090/catalogo/stock/replenish"))
-            //         .header("Content-Type", "application/json")
-            //         .method("PATCH", HttpRequest.BodyPublishers.ofString(requestBody))
-            //         .build();
-
-            // try {
-            //     HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            //     System.out.println("Status Code: " + response.statusCode());
-            //     System.out.println("Response Body: " + response.body());
-            // } catch (Exception e) {
-            //     e.printStackTrace();
-            // }
-        });
-    }
-
     public List<Order> getAll(){
         return this.orderRepository.findAll();
     }
@@ -109,7 +70,6 @@ public class OrderService {
         order.setCreateDate(LocalDateTime.now());
         this.orderRepository.save(order);
         this.orderEventGateway.sendOrderCreatedEvent(order);
-        // updateStock(orderRecord.productQuantities());
         return order;
     }
 
